@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>App Core</title>
+<link rel="stylesheet" type="text/css" href="stylesheets/users_style.css">
+</head>
+<body>
+	<h2>Timezone Store</h2>
+	<br />
+	<!-- 		<h3>Add a timezone</h3> -->
+	<p>
+	<table id="timezone">
+		<thead>
+			<tr><th>City</th><th>Timezone</th><th>Local Time</th></tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" value="City" size=11></td>
+				<td>
+					<form action="">
+						<select name="customers" onchange="showCustomer(this.value)">
+							<option value="">Select a timezone:</option>
+							<option value="ALFKI">Alfreds Futterkiste Hoonga Doonga</option>
+							<option value="NORTS ">North/South</option>
+							<option value="WOLZA">Wolski Zajazd</option>
+						</select>
+					</form>
+				</td>
+				<td></td>
+<!-- 				<td><input type="button" id="btnInsert" value="Insert" /></td> -->
+				<td><button class="ArrayInsert" id="arrIns" value="Bogota" name="hoonga">Insert</button></td>
+			</tr>
+		</tbody>
+	</table>
+	</p>
+	<!-- 		<h3>Stored timezones</h3> -->
+	<br />
+	<p>
+	<table id="timezone_list">
+		<thead>
+			<tr><th>City</th><th>Timezone</th><th>Local Time</th></tr>
+			<tr>
+				<th class="filter">filter:</th>
+				<th>
+<!-- 					<div class="dropdown_container"> -->
+						<select class="my_dropdown" id="my_dropdown" name="filter" onchange="filterChange()">
+							<option value="All">All</option>
+<!-- 							<option value="EST - Eastern Standard">EST - Eastern Standard</option>
+							<option value="Oz Time ">Oz Time</option>
+							<option value="PST - Pacific Standard">PST - Pacific Standard</option> -->
+						</select>
+<!-- 					</div>			 -->
+				</th>
+				<th></th>
+		</thead>		
+<!-- 		<tbody>
+			<tr><td>Bogota</td><td>EST - Eastern Standard</td><td>23:53</td></td>
+				<td><input type="button" id="btnUpdate" value=Update /></td>
+				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
+			<tr><td>Sydney</td><td>Oz Time</td><td>8:53</td></td>
+				<td><input type="button" id="btnUpdate" value=Update /></td>
+				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
+			<tr><td>Los Angeles</td><td>PST - Pacific Standard</td><td>20:53</td></td>
+				<td><input type="button" id="btnUpdate" value=Update /></td>
+				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
+		</tbody> -->
+		<tbody/>
+	</table>
+	</p>
+	<script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="scripts/appClient.js"></script>
+</body>
+</html>

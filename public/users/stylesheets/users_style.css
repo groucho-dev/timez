@@ -1,0 +1,64 @@
+/* #nodes_results{
+	width: 900px;
+} */
+#timezone {
+	width: 900px;
+}
+	
+table {
+	border-spacing : 5px;
+/* 	border-collapse: separate; */
+}
+	
+tr:nth-child(odd) { 
+	background-color: #E5E5E5;
+}
+
+tr:nth-child(even) {
+	background-color: #D1D1D1;
+}
+
+td {
+	padding: 10px;
+	vertical-align: top;
+}
+/* td:nth-child(1) {
+	width: 150px;
+	text-align: center;
+} */
+td:nth-child(1) {
+	width: 100px;
+	text-align: left;
+}
+
+td:nth-child(2) {
+	width: 250px;
+	text-align: left;
+}
+
+td:nth-child(3) {;
+	width: 70px;
+	text-align: center;
+}
+
+th {
+	background-color: #fff;
+	text-align: left;
+}
+
+th.filter {
+	background-color: #fff;
+	text-align: right;
+}
+
+/* div.dropdown_container {
+    width:200px;
+} */
+
+select.my_dropdown {
+    width:240px;
+}
+
+/* #timezone2 {
+	width: 900px;
+} */
