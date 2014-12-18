@@ -3,7 +3,7 @@
 jQuery(document).ready(function() {
 	//on initial page load
 //	alert("initial page load...");
-	getZones("all");
+	getZones("All");
 	
 /*	// Connect right button with click event
 	$("#btnGetSuccessContent").on("click", function() {
@@ -27,53 +27,32 @@ jQuery(document).ready(function() {
 });
 
 function filterChange() {
-	var value = document.getElementById("my_dropdown").value;
-//	alert("filter change: " + value);
-	getZones(value);
+	var filterValue = document.getElementById("filterZone").value;
+	getZones(filterValue);
 }
 
 function renderList(data) {
-//	alert("in renderList...");
 	var user_zones = [];
 	var distinct_zones = {};
 
 	if (data.result != 'error') {
 	    var d = new Date();
 	    var h = d.getUTCHours();
-	    var m = d.getUTCMinutes();
-	    var minutes = m < 10 ? "0" + m.toString() : m.toString();
+	    var m = d.getUTCMinutes();	    	    
+	    var minutes = m < 10 ? "0" + m.toString() : m.toString();	    
+	    $("#heading").html("Timezone Store &ensp; ~ &ensp; GMT " + h + ":" + minutes);
 	    
 		$.each(data.rows, function(index, objRow) {
-		    var local_time = (h + objRow.gmt_offset).toString() + ":" + minutes;	
+			var hours = ((h + objRow.gmt_offset + 24) % 24).toString();
 		    
 			user_zones.push(
 					"<tr><td><input type='text' value='" + objRow.city + "' size=11></td>" + 
 					"<td>" + objRow.timezone_name + "</td>" + 
-					"<td>" + local_time + "</td></tr>");
+					"<td>" + hours + ":" + minutes + "</td></tr>");
 			distinct_zones[objRow.timezone_name] = true;
 		});
 		
-		populateFilter(distinct_zones);
-		
-/*		var filter_zones = [];
-		$.each(distinct_zones, function(index, value) {
-//			alert(index);
-			filter_zones.push(index);
-		});
-		filter_zones.sort();
-		
-		var i;
-		var myOpts = document.getElementById("my_dropdown").options;
-	    while (myOpts.length > 1) {
-	    	myOpts.remove(myOpts.length - 1);
-	    }		
-		
-		for (i = 0; i < filter_zones.length; i++) {
-			var option = document.createElement("option");
-//			alert(filter_zones[i]);
-			option.text = filter_zones[i];
-			myOpts.add(option);
-        }*/		
+		populateFilter(distinct_zones);	
 	}
 	else {
 		user_zones.push("<tr><td colspan='3'> An error has occured... " + 
@@ -86,33 +65,36 @@ function renderList(data) {
 function populateFilter(distinct_zones) {
 	var filter_zones = [];
 	$.each(distinct_zones, function(index, value) {
-//		alert(index);
 		filter_zones.push(index);
 	});
 	filter_zones.sort();
 	
 	var i;
-	var myOpts = document.getElementById("my_dropdown").options;	
+	var filter = document.getElementById("filterZone");
+	var filterValue = filter.value;
+	
+	var myOpts = filter.options;
     while (myOpts.length > 1) {
     	myOpts.remove(myOpts.length - 1);
     }		
 	
 	for (i = 0; i < filter_zones.length; i++) {
 		var option = document.createElement("option");
-//		alert(filter_zones[i]);
 		option.text = filter_zones[i];
 		myOpts.add(option);
+//		alert("i=" + i + " ; option.text=" + option.text + " ; filterValue=" + filterValue);
+		if (option.text === filterValue) {
+			filter.selectedIndex = i + 1;
+//			alert("sel i=" + (i + 1));
+		}
     }
-	
-//	var filter = document.getElementById("my_dropdown");
-//	alert("filter value selected: " + filter.value);
 }
 
-function getZones(filter) {	
+function getZones(filterValue) {	
 	$.ajax({
 		type: 'GET',
 //		url: "/users/zones",
-		url: "/users/zones/" + filter,
+		url: "/users/zones/" + filterValue,
 		dataType: "json", // data type of response
 		success: renderList
 	});	

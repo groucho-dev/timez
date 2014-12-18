@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset=utf-8>
-<title>App Core</title>
+<title>Timezone App</title>
 <link rel="stylesheet" type="text/css" href="stylesheets/users_style.css">
 </head>
 <body>
-	<h2>Timezone Store</h2>
+	<h2 id="heading">Timezone Store</h2>
 	<br />
 	<!-- 		<h3>Add a timezone</h3> -->
 	<p>
@@ -41,27 +41,16 @@
 		<thead>
 			<tr><th>City</th><th>Timezone</th><th>Local Time</th></tr>
 			<tr>
-				<th class="filter">filter:</th>
+				<th class=filter>filter:</th>
 				<th>
-<!-- 					<div class="dropdown_container"> -->
-						<select class="my_dropdown" id="my_dropdown" name="filter" onchange="filterChange()">
-							<option value="All">All</option>
-<!-- 							<option value="EST - Eastern Standard">EST - Eastern Standard</option>
-							<option value="Oz Time ">Oz Time</option>
-							<option value="PST - Pacific Standard">PST - Pacific Standard</option> -->
-						</select>
-<!-- 					</div>			 -->
+					<select id="filterZone" name="filter" onchange="filterChange()">
+						<option value="All">All</option>
+					</select>
 				</th>
 				<th></th>
 		</thead>		
 <!-- 		<tbody>
 			<tr><td>Bogota</td><td>EST - Eastern Standard</td><td>23:53</td></td>
-				<td><input type="button" id="btnUpdate" value=Update /></td>
-				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
-			<tr><td>Sydney</td><td>Oz Time</td><td>8:53</td></td>
-				<td><input type="button" id="btnUpdate" value=Update /></td>
-				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
-			<tr><td>Los Angeles</td><td>PST - Pacific Standard</td><td>20:53</td></td>
 				<td><input type="button" id="btnUpdate" value=Update /></td>
 				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
 		</tbody> -->

@@ -1,8 +1,6 @@
 var express = require("express");
 var router = express.Router();
 
-//console.log("in users.js");
-
 function sendError(objResponse, iStatusCode, strResult, strType, objError) {
 	objResponse.send({
 		result : strResult,
@@ -27,17 +25,23 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 			sendError(objResponse, 503, "error", "connection", objError);
 		}
 		else {
-//			console.log("GET:: DB POOL CONN SUCCESS!!");	
-			var strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
+			if (filterParam == "All") {
+				var strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
+					"FROM user_zones a, zones b " +
+					"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = b.name)";
+			}
+			else {
+				var strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
 				"FROM user_zones a, zones b " +
-				"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = b.name)";
+				"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = " + 
+				"'" + filterParam + "')" + " AND (a.timezone_name = b.name)";	
+			}
 	
 			objConnection.query(strQuery, function(objError, objRows, objFields) {
 				if (objError) {
 					sendError(objResponse, 500, "error", "query", objError);	
 				}
 				else {
-					// put the results in JSON and return them
 //					console.log(objRows);
 					objResponse.send({
 						result : "success",
