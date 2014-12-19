@@ -3,7 +3,7 @@
 jQuery(document).ready(function() {
 	//on initial page load
 //	alert("initial page load...");
-	getZones("All");
+	get_zones("All");
 	
 /*	// Connect right button with click event
 	$("#btnGetSuccessContent").on("click", function() {
@@ -20,15 +20,19 @@ jQuery(document).ready(function() {
 		_deleteRESTfulData();
 	});*/	
 	
-	$("#arrIns").on("click", function() {
-		alert(this.value);
+//	$("#arrIns").on("click", function() {
+//		alert(this.value);
+//	});	
+	
+	$("#btnAdd").on("click", function() {
+		post_zone();
 	});	
 
 });
 
 function filterChange() {
 	var filterValue = document.getElementById("filterZone").value;
-	getZones(filterValue);
+	get_zones(filterValue);
 }
 
 function renderList(data) {
@@ -90,11 +94,21 @@ function populateFilter(distinct_zones) {
     }
 }
 
-function getZones(filterValue) {	
+function get_zones(filterValue) {	
 	$.ajax({
-		type: 'GET',
+		type: "GET",
 //		url: "/users/zones",
 		url: "/users/zones/" + filterValue,
+		dataType: "json", // data type of response
+		success: renderList
+	});	
+}
+
+function post_zone() {
+	$.ajax({
+		type: "POST",
+		url: "/users",
+		data: {name: $("#addCity").val(), location: "Boston"},
 		dataType: "json", // data type of response
 		success: renderList
 	});	

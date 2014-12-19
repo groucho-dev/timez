@@ -9,10 +9,6 @@ function sendError(objResponse, iStatusCode, strResult, strType, objError) {
 	});
 }
 
-router.post("/", function(objRequest, objResponse) {
-	objResponse.send("hey, hey Mister POST-man...!");
-});
-
 //router.get("/zones", function(objRequest, objResponse) {
 router.get("/zones/:filter", function(objRequest, objResponse) {
 	var db_pool = objRequest.app.get("db_pool");
@@ -56,6 +52,23 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 			objConnection.release();
 		}
 	});
+});
+
+//router.post("/", function(objRequest, objResponse) {
+//	objResponse.send("hey, hey Mister POST-man...!");
+//});
+
+router.post("/", function(objRequest, objResponse) {
+	console.log("name=" + objRequest.param("name"));
+	console.log("location=" + objRequest.param("location"));
+	console.log("body=" + JSON.stringify(objRequest.body));
+	console.log("objRequest.body.name", objRequest.body.name);	
+	
+	
+	
+	
+	
+	objResponse.send("hey, hey Mister POST-man...!");
 });
 
 module.exports = router; // 'router' available as a module

@@ -1,5 +1,7 @@
 var express = require("express");
+var bodyParser = require("body-parser");
 var app = express();
+
 app.set("port", process.env.PORT || 3030);
 
 var db = require("mysql");
@@ -13,13 +15,19 @@ var db_pool = db.createPool({
 
 app.set("db_pool", db_pool);
 
-var routes = require('./routes/index'); // 'routes' set to the router module exported by index.js
-var users = require('./routes/users');	// 'users' set to the router module exported by users.js
+//parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
+var routes = require("./routes/index"); // 'routes' set to the router module exported by index.js
+var users = require("./routes/users");	// 'users' set to the router module exported by users.js
 app.use("/", routes);
 app.use("/users", users);
 
 //Setup static page delivery 
 app.use("/users", express.static(__dirname + "/public/users"));
+
 
 
 /*// catch 404 and forward to error handler
