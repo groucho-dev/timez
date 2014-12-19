@@ -1,11 +1,30 @@
 var express = require("express");
 var router = express.Router();
 
-function sendError(objResponse, iStatusCode, strResult, strType, objError) {
+function sendError(objResponse, iStatusCode, strStatus, strType, errorCode) {
 	objResponse.send({
-		result : strResult,
-		err : objError.code,
+		status : strStatus,
+		err : errorCode,
 		err_type : strType
+	});
+}
+
+function runQuery(objConnection, strQuery, objResponse) {
+	objConnection.query(strQuery, function(objError, objRows, objFields) {
+		if (objError) {
+			sendError(objResponse, 500, "error", "query", objError.code);	
+		}
+		else {
+//			console.log(objRows);
+			objResponse.send({
+				status : "success",
+				err : "",
+				err_type : "",
+				fields : objFields,
+				rows : objRows,
+				length : objRows.length
+			});
+		}
 	});
 }
 
@@ -13,44 +32,31 @@ function sendError(objResponse, iStatusCode, strResult, strType, objError) {
 router.get("/zones/:filter", function(objRequest, objResponse) {
 	var db_pool = objRequest.app.get("db_pool");
 	var filterParam = objRequest.param("filter");
-	console.log("in get:filterParam=" + filterParam);
+	console.log("in get /zones :filterParam=" + filterParam);
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
 //			console.log("GET:: DB POOL CONN ERROR!!");
-			sendError(objResponse, 503, "error", "connection", objError);
+			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
-			if (filterParam == "All") {
-				var strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
+			var strQuery;
+			if (filterParam === "All") {
+				strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
 					"FROM user_zones a, zones b " +
 					"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = b.name)";
 			}
 			else {
-				var strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
+				strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
 				"FROM user_zones a, zones b " +
 				"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = " + 
 				"'" + filterParam + "')" + " AND (a.timezone_name = b.name)";	
 			}
-	
-			objConnection.query(strQuery, function(objError, objRows, objFields) {
-				if (objError) {
-					sendError(objResponse, 500, "error", "query", objError);	
-				}
-				else {
-//					console.log(objRows);
-					objResponse.send({
-						result : "success",
-						err : "",
-						err_type : "",
-						fields : objFields,
-						rows : objRows,
-						length : objRows.length
-					});
-				}
-			});
-			objConnection.release();
+			
+			runQuery(objConnection, strQuery, objResponse);			
 		}
+		
+		objConnection.release();
 	});
 });
 
@@ -59,9 +65,8 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 //});
 
 router.post("/", function(objRequest, objResponse) {
-/*	console.log("location=" + objRequest.param("location"));
-	console.log("body=" + JSON.stringify(objRequest.body));
-	console.log("objRequest.body.name", objRequest.body.name);	*/
+//	console.log("city=" + objRequest.param("city"));
+//	console.log("body=" + JSON.stringify(objRequest.body));
 	
 	var db_pool = objRequest.app.get("db_pool");
 	console.log("in post");
@@ -69,32 +74,115 @@ router.post("/", function(objRequest, objResponse) {
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
 			console.log("GET:: DB POOL CONN ERROR!!");
-			sendError(objResponse, 503, "error", "connection", objError);
+			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
-			var strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
-				"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
-				"'CET: Central European')";	
-	
-			objConnection.query(strQuery, function(objError, objRows, objFields) {
+			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
+				"(city = '" + objRequest.body.city + "') AND (timezone_name = '" + 
+				objRequest.body.timezone + "')";
+
+				objConnection.query(strQuery, function(objError, objRows, objFields) {
 				if (objError) {
-					console.log("GET:: DB INSERRT ERROR!!");
-					sendError(objResponse, 500, "error", "query", objError);	
+					console.log("GET:: DB INSERT ERROR!!");
+					sendError(objResponse, 500, "error", "query", objError.code);	
 				}
 				else {
-//					console.log(objRows);
-					objResponse.send({
-						result : "success",
-						err : "",
-						err_type : "",
-						fields : objFields,
-						rows : objRows,
-						length : objRows.length
-					});
+					if (objRows.length > 0) {
+						//city & timezone combination already on db for this user
+						sendError(objResponse, 500, "error", 
+								"query - attempt to insert an existing record", 1);				
+					}
+					else {
+						strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
+							"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
+							"'" + objRequest.body.timezone + "')";						
+						runQuery(objConnection, strQuery, objResponse);
+					}
 				}
 			});
-			objConnection.release();
 		}
+		objConnection.release();
+	});
+});
+
+router.put("/", function(objRequest, objResponse) {
+	console.log("in put");
+	console.log("oldCity=" + objRequest.param("oldCity"));
+	console.log("newCity=" + objRequest.param("newCity"));
+	console.log("body=" + JSON.stringify(objRequest.body));
+	
+/*	var db_pool = objRequest.app.get("db_pool");	
+	
+	db_pool.getConnection(function(objError, objConnection) {
+		if (objError) {
+			console.log("GET:: DB POOL CONN ERROR!!");
+			sendError(objResponse, 503, "error", "connection", objError.code);
+		}
+		else {
+			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
+				"(city = '" + objRequest.body.city + "') AND (timezone_name = '" + 
+				objRequest.body.timezone + "')";
+
+				objConnection.query(strQuery, function(objError, objRows, objFields) {
+				if (objError) {
+					console.log("GET:: DB INSERT ERROR!!");
+					sendError(objResponse, 500, "error", "query", objError.code);	
+				}
+				else {
+					if (objRows.length > 0) {
+						//city & timezone combination already on db for this user
+						sendError(objResponse, 500, "error", 
+								"query - attempt to insert an existing record", 1);				
+					}
+					else {
+						strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
+							"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
+							"'" + objRequest.body.timezone + "')";						
+						runQuery(objConnection, strQuery, objResponse);
+					}
+				}
+			});
+		}
+		objConnection.release();
+	});*/
+});
+
+router.get("/load_zones", function(objRequest, objResponse) {
+	var db_pool = objRequest.app.get("db_pool");
+	var filterParam = objRequest.param("filter");
+	console.log("in get /load_zones");
+	
+	db_pool.getConnection(function(objError, objConnection) {
+		if (objError) {
+//			console.log("GET:: DB POOL CONN ERROR!!");
+			sendError(objResponse, 503, "error", "connection", objError.code);
+		}
+		else {
+			var strQuery = "SELECT name FROM zones";
+			runQuery(objConnection, strQuery, objResponse);			
+		}
+		
+		objConnection.release();
+	});
+});
+
+router.get("/zone_time/:selectedAddZone", function(objRequest, objResponse) {
+	var db_pool = objRequest.app.get("db_pool");
+	var selectedAddZone = objRequest.param("selectedAddZone");
+	console.log("in get /zone_time :selectedAddZone=" + selectedAddZone);
+	
+	db_pool.getConnection(function(objError, objConnection) {
+		if (objError) {
+//			console.log("GET:: DB POOL CONN ERROR!!");
+			sendError(objResponse, 503, "error", "connection", objError.code);
+		}
+		else {
+			var strQuery = "SELECT gmt_offset FROM zones WHERE name = '" + 
+				selectedAddZone + "'";		
+			runQuery(objConnection, strQuery, objResponse);			
+		}
+		
+		objConnection.release();
 	});
 });
 

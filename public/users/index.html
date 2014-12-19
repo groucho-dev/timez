@@ -18,18 +18,18 @@
 			<tr>
 				<td><input id=addCity type="text" value="" placeholder="location" size=11></td>
 				<td>
-					<form action="">
-						<select name="customers" onchange="showCustomer(this.value)">
-							<option value="">Select a timezone:</option>
-							<option value="ALFKI">Alfreds Futterkiste Hoonga Doonga</option>
-							<option value="NORTS ">North/South</option>
-							<option value="WOLZA">Wolski Zajazd</option>
-						</select>
-					</form>
+					<select id="addZone" onchange="getAddZoneTime(this.value)">
+						<option value="">Select a timezone:</option>
+<!-- 						<option value="ALFKI">Alfreds Futterkiste Hoonga Doonga</option>
+						<option value="NORTS ">North/South</option>
+						<option value="WOLZA">Wolski Zajazd</option> -->
+					</select>
 				</td>
-				<td></td>
-				<td><input type="button" id="btnAdd" value="add"/></td>
+				<td id=addTime></td>
+				<td><input type="button" id="btnAdd" value="add" class="button" 
+					onclick="onClickAdd()"/></td>
 <!-- 				<td><button class="ArrayInsert" id="arrIns" value="Bogota" name="hoonga">arrInsert</button></td> -->
+				<td id=addInputMessage></td>
 			</tr>
 		</tbody>
 	</table>
@@ -43,7 +43,8 @@
 			<tr>
 				<th class=filter>filter:</th>
 				<th>
-					<select id="filterZone" name="filter" onchange="filterChange()">
+<!-- 					<select id="filterZone" name="filter" onchange="filterChange()"> -->
+					<select id="filterZone" onchange="filterChange()">
 						<option value="All">All</option>
 					</select>
 				</th>

@@ -51,6 +51,11 @@ td:nth-child(5) {;
 	text-align: center;
 } */
 
+td.button {;
+	width: 60px;
+	text-align: center;
+}
+
 th {
 	background-color: #fff;
 	text-align: left;
