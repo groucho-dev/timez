@@ -25,6 +25,7 @@ jQuery(document).ready(function() {
 //	});	
 	
 	$("#btnAdd").on("click", function() {
+		alert(this.id);
 		post_zone();
 	});	
 
@@ -46,14 +47,18 @@ function renderList(data) {
 	    var minutes = m < 10 ? "0" + m.toString() : m.toString();	    
 	    $("#heading").html("Timezone Store &ensp; ~ &ensp; GMT " + h + ":" + minutes);
 	    
-		$.each(data.rows, function(index, objRow) {
+		var i = 0;
+	    $.each(data.rows, function(index, objRow) {
 			var hours = ((h + objRow.gmt_offset + 24) % 24).toString();
 		    
 			user_zones.push(
 					"<tr><td><input type='text' value='" + objRow.city + "' size=11></td>" + 
 					"<td>" + objRow.timezone_name + "</td>" + 
-					"<td>" + hours + ":" + minutes + "</td></tr>");
+					"<td>" + hours + ":" + minutes + "</td>" +
+					"<td><input type='button' id='btnUpdate" + i + "' value='modify' /></td>" + 
+					"<td><input type='button' id='btnDelete" + i + "' value='remove' /></td></tr>");
 			distinct_zones[objRow.timezone_name] = true;
+			i++;
 		});
 		
 		populateFilter(distinct_zones);	
@@ -94,7 +99,8 @@ function populateFilter(distinct_zones) {
     }
 }
 
-function get_zones(filterValue) {	
+function get_zones(filterValue) {
+//	alert("ajax:GET");
 	$.ajax({
 		type: "GET",
 //		url: "/users/zones",
@@ -105,14 +111,31 @@ function get_zones(filterValue) {
 }
 
 function post_zone() {
+	function postZoneComplete(data) {
+//		alert("in postZoneComplete()");
+		$("#addCity").val("");
+		get_zones("All");
+	}
+	
+//	alert("ajax:POST");
 	$.ajax({
 		type: "POST",
 		url: "/users",
-		data: {name: $("#addCity").val(), location: "Boston"},
+		data: {city: $("#addCity").val(), timezone: "CET: Central European"},
 		dataType: "json", // data type of response
-		success: renderList
+		success: postZoneComplete
 	});	
 }
+
+
+/*$.ajax({
+    url: 'http://example.com/',
+    type: 'PUT',
+    data: 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
+    success: function() { alert('PUT completed'); }
+});*/
+
+
 
 
 /*function _deleteRESTfulData() {

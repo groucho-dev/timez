@@ -13,7 +13,7 @@ function sendError(objResponse, iStatusCode, strResult, strType, objError) {
 router.get("/zones/:filter", function(objRequest, objResponse) {
 	var db_pool = objRequest.app.get("db_pool");
 	var filterParam = objRequest.param("filter");
-	console.log("filterParam=" + filterParam);
+	console.log("in get:filterParam=" + filterParam);
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
@@ -59,16 +59,43 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 //});
 
 router.post("/", function(objRequest, objResponse) {
-	console.log("name=" + objRequest.param("name"));
-	console.log("location=" + objRequest.param("location"));
+/*	console.log("location=" + objRequest.param("location"));
 	console.log("body=" + JSON.stringify(objRequest.body));
-	console.log("objRequest.body.name", objRequest.body.name);	
+	console.log("objRequest.body.name", objRequest.body.name);	*/
 	
+	var db_pool = objRequest.app.get("db_pool");
+	console.log("in post");
 	
+	db_pool.getConnection(function(objError, objConnection) {
+		if (objError) {
+			console.log("GET:: DB POOL CONN ERROR!!");
+			sendError(objResponse, 503, "error", "connection", objError);
+		}
+		else {
+			var strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
+				"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
+				"'CET: Central European')";	
 	
-	
-	
-	objResponse.send("hey, hey Mister POST-man...!");
+			objConnection.query(strQuery, function(objError, objRows, objFields) {
+				if (objError) {
+					console.log("GET:: DB INSERRT ERROR!!");
+					sendError(objResponse, 500, "error", "query", objError);	
+				}
+				else {
+//					console.log(objRows);
+					objResponse.send({
+						result : "success",
+						err : "",
+						err_type : "",
+						fields : objFields,
+						rows : objRows,
+						length : objRows.length
+					});
+				}
+			});
+			objConnection.release();
+		}
+	});
 });
 
 module.exports = router; // 'router' available as a module
