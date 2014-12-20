@@ -1,59 +1,20 @@
 // Client application
-
 var listCities;
 
 jQuery(document).ready(function() {
 	//on initial page load
 //	alert("initial page load...");
-	$("#addInputMessage").html("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + 
-			"&emsp;&emsp;&emsp;&emsp;&emsp;");
-	get_load_zones();	//populate add zone select box
-	
+	get_load_zones();	//populate add zone select box	
 	get_zones("All");	//display all user zones
-	
-/*	// Connect right button with click event
-	$("#btnGetSuccessContent").on("click", function() {
-		_getRESTfulData('nodes');
-	});
-
-	// Connect wrong button with click event
-	$("#btnGetErrorContent").on("click", function() {
-		_getRESTfulData('social_security_numbers');
-	});
-
-	// Connect delete button with click event
-	$("#btnDeleteAll").on("click", function() {
-		_deleteRESTfulData();
-	});*/	
-	
-//	$("#arrIns").on("click", function() {
-//		alert(this.value);
-//	});	
-	
-/*	$("#btnAdd").on("click", function() {
-//		alert(this.id);
-		var addSelect = document.getElementById("addZone");						
-		if ($("#addCity").val() === "" || addSelect.selectedIndex === 0) {
-			$("#addInputMessage").html("both City and Timezone fields are required!");
-		}
-		else {
-			$("#addInputMessage").html("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + 
-				"&emsp;&emsp;&emsp;&emsp;&emsp;");
-			post_zone();
-		}
-	});	*/
-
 });
 
 function onClickAdd() {
-	alert(this.id);
-	var addSelect = document.getElementById("addZone");						
+	var addSelect = document.getElementById("addZone");	
 	if ($("#addCity").val() === "" || addSelect.selectedIndex === 0) {
-		$("#addInputMessage").html("both City and Timezone fields are required!");
+		$("#addStatusMessage").html("both City and Timezone fields are required!");
 	}
 	else {
-		$("#addInputMessage").html("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + 
-			"&emsp;&emsp;&emsp;&emsp;&emsp;");
+		$("#addStatusMessage").html("");
 		post_zone();
 	}
 }
@@ -73,6 +34,11 @@ function onClickModify(listId) {
 	else if($("#listCity" + listId).val() !== listCities[listId]) {
 		put_zone(listId);
 	}
+}
+
+function onClickDelete(listId) {
+//	alert("delete button id: " + listId);
+	delete_zone(listId);
 }
 
 function getAddZoneTime(selectedAddZone) {
@@ -108,7 +74,8 @@ function renderList(result) {
 				"<td>" + hours + ":" + minutes + "</td>" +
 				"<td><input type='button' id=" + j + " value='modify' " + 
 					"onclick='onClickModify(" + j + ")'/></td>" + 
-				"<td><input type='button' id='btnDelete" + j + "' value='remove' /></td>" +
+				"<td><input type='button' id=" + j + "' value='remove' " +
+					"onclick='onClickDelete(" + j + ")'/></td>" +
 				"<td id='modifyStatusMessage" + j + "'></td></tr>");
 				
 			distinct_zones[objRow.timezone_name] = true;
@@ -234,12 +201,6 @@ function post_zone() {
 	});	
 }
 
-jQuery.fn.redraw = function() {
-    return this.hide(0, function() {
-        $(this).show();
-    });
-};
-
 function put_zone(listId) {
 	function putZoneComplete(result) {
 //		alert("in putZoneComplete() with listId=" + listId);
@@ -271,6 +232,30 @@ function put_zone(listId) {
 		success: putZoneComplete
 	});	
 }
+
+function delete_zone(listId) {
+		function deleteZoneComplete(result) {
+//			alert("in deleteZoneComplete()");
+			if (result.status != 'error') {
+				var filterValue = document.getElementById("filterZone").value;
+//				alert("in putZoneComplete() with filterValue=" + filterValue);
+				get_zones(filterValue);
+			}
+			else {				
+				$("#modifyStatusMessage" + listId).text(result.err_type + ": " + result.err);
+			}
+		}
+		
+//		alert("ajax:DELETE");
+		$.ajax({
+			type: "DELETE",
+			url: "/users",
+			data: {city: $("#listCity" + listId).val(),
+				timezone: $("#listTimezone" + listId).text()},
+			dataType: "json", // data type of response
+			success: deleteZoneComplete
+		});	
+	}
 
 function get_load_zones() {
 //	alert("ajax:GET /users/load_zones/");

@@ -124,8 +124,31 @@ router.put("/", function(objRequest, objResponse) {
 				"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
 				objRequest.body.timezone + "')";
 			
-			console.log(strQuery);
+//			console.log(strQuery);
 			runQuery(objConnection, strQuery, objResponse);
+		}
+		
+		objConnection.release();
+	});
+});
+
+router.delete("/", function(objRequest, objResponse) {	
+	var db_pool = objRequest.app.get("db_pool");	
+//	console.log("body=" + JSON.stringify(objRequest.body));
+	
+	db_pool.getConnection(function(objError, objConnection) {
+		if (objError) {
+//			console.log("GET:: DB POOL CONN ERROR!!");
+			sendError(objResponse, 503, "error", "connection", objError.code);
+		}
+		else {
+			var strQuery = "DELETE FROM user_zones " +
+					"WHERE (username = 'RahulRohatgi') AND " + 
+					"(city = '" + objRequest.body.city + "') AND " + 
+					"(timezone_name = '" + objRequest.body.timezone + "')";
+			
+//			console.log(strQuery);
+			runQuery(objConnection, strQuery, objResponse);			
 		}
 		
 		objConnection.release();
