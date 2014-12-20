@@ -225,9 +225,17 @@ function put_zone(listId) {
 				$("#modifyStatusMessage" + listId).html("modified");
 			});
 		}
-		else {				
+/*		else {				
 			$("#modifyStatusMessage" + listId).text(result.err_type + ": " + result.err);
-		}
+		}*/
+		else {
+			if (result.err === 1) {
+				$("#modifyStatusMessage" + listId).html("no change - modification already exists!");
+			}
+			else {				
+				$("#modifyStatusMessage" + listId).html(result.err_type + ": " + result.err);
+			}
+		}		
 	}			
 	
 //	alert("ajax:PUT /users");

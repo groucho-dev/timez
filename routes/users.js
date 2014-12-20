@@ -108,7 +108,7 @@ router.put("/", function(objRequest, objResponse) {
 			console.log("GET:: DB POOL CONN ERROR!!");
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
-		else {
+/*		else {
 			var strQuery = "UPDATE user_zones SET city = '" + objRequest.body.newCity + "' " +
 				"WHERE (username = 'RahulRohatgi') AND " +
 				"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
@@ -116,7 +116,35 @@ router.put("/", function(objRequest, objResponse) {
 			
 //			console.log(strQuery);
 			runQuery(objConnection, strQuery, objResponse);
-		}
+		}*/
+		else {
+			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
+				"(city = '" + objRequest.body.newCity + "') AND (timezone_name = '" + 
+				objRequest.body.timezone + "')";
+
+				objConnection.query(strQuery, function(objError, objRows, objFields) {
+				if (objError) {
+					console.log("GET:: DB INSERT ERROR!!");
+					sendError(objResponse, 500, "error", "query", objError.code);	
+				}
+				else {
+					if (objRows.length > 0) {
+						//city & timezone combination already on db for this user
+						sendError(objResponse, 500, "error", 
+								"query - attempt to modify to an existing record", 1);				
+					}
+					else {
+						strQuery = "UPDATE user_zones SET city = '" + objRequest.body.newCity + "' " +
+						"WHERE (username = 'RahulRohatgi') AND " +
+						"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
+						objRequest.body.timezone + "')";
+						
+//						console.log(strQuery);
+						runQuery(objConnection, strQuery, objResponse);
+					}
+				}
+			});
+		}		
 		
 		objConnection.release();
 	});
