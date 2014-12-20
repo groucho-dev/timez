@@ -106,12 +106,12 @@ router.post("/", function(objRequest, objResponse) {
 });
 
 router.put("/", function(objRequest, objResponse) {
-	console.log("in put");
-	console.log("oldCity=" + objRequest.param("oldCity"));
-	console.log("newCity=" + objRequest.param("newCity"));
-	console.log("body=" + JSON.stringify(objRequest.body));
+//	console.log("in put");
+//	console.log("oldCity=" + objRequest.param("oldCity"));
+//	console.log("newCity=" + objRequest.param("newCity"));
+//	console.log("body=" + JSON.stringify(objRequest.body));
 	
-/*	var db_pool = objRequest.app.get("db_pool");	
+	var db_pool = objRequest.app.get("db_pool");	
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
@@ -119,32 +119,17 @@ router.put("/", function(objRequest, objResponse) {
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
-			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
-				"(city = '" + objRequest.body.city + "') AND (timezone_name = '" + 
+			var strQuery = "UPDATE user_zones SET city = '" + objRequest.body.newCity + "' " +
+				"WHERE (username = 'RahulRohatgi') AND " +
+				"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
 				objRequest.body.timezone + "')";
-
-				objConnection.query(strQuery, function(objError, objRows, objFields) {
-				if (objError) {
-					console.log("GET:: DB INSERT ERROR!!");
-					sendError(objResponse, 500, "error", "query", objError.code);	
-				}
-				else {
-					if (objRows.length > 0) {
-						//city & timezone combination already on db for this user
-						sendError(objResponse, 500, "error", 
-								"query - attempt to insert an existing record", 1);				
-					}
-					else {
-						strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
-							"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
-							"'" + objRequest.body.timezone + "')";						
-						runQuery(objConnection, strQuery, objResponse);
-					}
-				}
-			});
+			
+			console.log(strQuery);
+			runQuery(objConnection, strQuery, objResponse);
 		}
+		
 		objConnection.release();
-	});*/
+	});
 });
 
 router.get("/load_zones", function(objRequest, objResponse) {

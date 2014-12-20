@@ -65,7 +65,14 @@ function filterChange() {
 
 function onClickModify(listId) {
 //	alert("modify button id: " + listId);
-	put_zone(listId);
+	$("#modifyStatusMessage" + listId).html("");
+	
+	if ($("#listCity" + listId).val() === "") {
+		$("#modifyStatusMessage" + listId).html("City field is required!");
+	}
+	else if($("#listCity" + listId).val() !== listCities[listId]) {
+		put_zone(listId);
+	}
 }
 
 function getAddZoneTime(selectedAddZone) {
@@ -101,7 +108,9 @@ function renderList(result) {
 				"<td>" + hours + ":" + minutes + "</td>" +
 				"<td><input type='button' id=" + j + " value='modify' " + 
 					"onclick='onClickModify(" + j + ")'/></td>" + 
-				"<td><input type='button' id='btnDelete" + j + "' value='remove' /></td></tr>");
+				"<td><input type='button' id='btnDelete" + j + "' value='remove' /></td>" +
+				"<td id='modifyStatusMessage" + j + "'></td></tr>");
+				
 			distinct_zones[objRow.timezone_name] = true;
 			
 			listCities.push(objRow.city);
@@ -207,10 +216,10 @@ function post_zone() {
 		}
 		else {
 			if (result.err === 1) {
-				$("#addInputMessage").html("the city/timezone combination already exists!");
+				$("#addStatusMessage").html("the city/timezone combination already exists!");
 			}
 			else {				
-				$("#addInputMessage").html(result.err_type + ": " + result.err);
+				$("#addStatusMessage").html(result.err_type + ": " + result.err);
 			}
 		}
 	}
@@ -225,7 +234,33 @@ function post_zone() {
 	});	
 }
 
+jQuery.fn.redraw = function() {
+    return this.hide(0, function() {
+        $(this).show();
+    });
+};
+
 function put_zone(listId) {
+	function putZoneComplete(result) {
+//		alert("in putZoneComplete() with listId=" + listId);
+		if (result.status != 'error') {
+			var filterValue = document.getElementById("filterZone").value;
+//			alert("in putZoneComplete() with filterValue=" + filterValue);
+			
+			$.ajax({
+				type: "GET",
+				url: "/users/zones/" + filterValue,
+				dataType: "json", // data type of response
+				success: renderList
+			}).done(function() { //resolve deferred object
+				$("#modifyStatusMessage" + listId).html("modified");
+			});
+		}
+		else {				
+			$("#modifyStatusMessage" + listId).text(result.err_type + ": " + result.err);
+		}
+	}			
+	
 //	alert("ajax:PUT /users");
 	$.ajax({
 		type: "PUT",
@@ -233,7 +268,7 @@ function put_zone(listId) {
 		data: {oldCity: listCities[listId], newCity: $("#listCity" + listId).val(),
 			timezone: $("#listTimezone" + listId).text()},			
 		dataType: "json", // data type of response
-		success: renderList
+		success: putZoneComplete
 	});	
 }
 
