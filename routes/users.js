@@ -60,14 +60,8 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 	});
 });
 
-//router.post("/", function(objRequest, objResponse) {
-//	objResponse.send("hey, hey Mister POST-man...!");
-//});
-
 router.post("/", function(objRequest, objResponse) {
-//	console.log("city=" + objRequest.param("city"));
 //	console.log("body=" + JSON.stringify(objRequest.body));
-	
 	var db_pool = objRequest.app.get("db_pool");
 	console.log("in post");
 	
@@ -106,11 +100,7 @@ router.post("/", function(objRequest, objResponse) {
 });
 
 router.put("/", function(objRequest, objResponse) {
-//	console.log("in put");
-//	console.log("oldCity=" + objRequest.param("oldCity"));
-//	console.log("newCity=" + objRequest.param("newCity"));
 //	console.log("body=" + JSON.stringify(objRequest.body));
-	
 	var db_pool = objRequest.app.get("db_pool");	
 	
 	db_pool.getConnection(function(objError, objConnection) {
@@ -133,12 +123,11 @@ router.put("/", function(objRequest, objResponse) {
 });
 
 router.delete("/", function(objRequest, objResponse) {	
-	var db_pool = objRequest.app.get("db_pool");	
 //	console.log("body=" + JSON.stringify(objRequest.body));
+	var db_pool = objRequest.app.get("db_pool");	
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
-//			console.log("GET:: DB POOL CONN ERROR!!");
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
@@ -162,7 +151,6 @@ router.get("/load_zones", function(objRequest, objResponse) {
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
-//			console.log("GET:: DB POOL CONN ERROR!!");
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
@@ -181,7 +169,6 @@ router.get("/zone_time/:selectedAddZone", function(objRequest, objResponse) {
 	
 	db_pool.getConnection(function(objError, objConnection) {
 		if (objError) {
-//			console.log("GET:: DB POOL CONN ERROR!!");
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {

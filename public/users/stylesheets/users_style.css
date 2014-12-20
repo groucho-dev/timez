@@ -20,7 +20,7 @@ td {
 }
 
 #timezone td:nth-child(1) {
-	width: 100px;
+	width: 120px;
 	text-align: left;
 }
 #timezone td:nth-child(2) {
@@ -41,7 +41,7 @@ td {
 }
 
 #timezone_list td:nth-child(1) {
-	width: 100px;
+	width: 120px;
 	text-align: left;
 }
 #timezone_list td:nth-child(2) {

@@ -38,7 +38,12 @@ function onClickModify(listId) {
 
 function onClickDelete(listId) {
 //	alert("delete button id: " + listId);
-	delete_zone(listId);
+	if($("#listCity" + listId).val() === listCities[listId]) {
+		delete_zone(listId);
+	}
+	else {
+		$("#modifyStatusMessage" + listId).html("can not delete partial modification!");
+	}
 }
 
 function getAddZoneTime(selectedAddZone) {
@@ -69,7 +74,7 @@ function renderList(result) {
 		    
 			user_zones.push(
 				"<tr><td><input type='text' id='listCity" + j + "' value='" + 
-					objRow.city + "' size=11></td>" + 
+					objRow.city + "' size=15></td>" + 
 				"<td id='listTimezone" + j + "'>" + objRow.timezone_name + "</td>" + 
 				"<td>" + hours + ":" + minutes + "</td>" +
 				"<td><input type='button' id=" + j + " value='modify' " + 
@@ -83,6 +88,12 @@ function renderList(result) {
 			listCities.push(objRow.city);
 			j++;
 		});
+	    
+	    if (listCities.length === 0) {
+	    	user_zones.push(
+	    		"<tr><td>no records</td>" +
+	    		"<td>there are no records to display</td></tr>");
+	    }
 		
 		populateFilter(distinct_zones);	
 	}
@@ -105,15 +116,15 @@ function populateFilter(distinct_zones) {
 	var filter = document.getElementById("filterZone");
 	var filterValue = filter.value;
 	
-	var myOpts = filter.options;
-    while (myOpts.length > 1) {
-    	myOpts.remove(myOpts.length - 1);
+	var filterOptions = filter.options;
+    while (filterOptions.length > 1) {
+    	filterOptions.remove(filterOptions.length - 1);
     }		
 	
 	for (i = 0; i < filter_zones.length; i++) {
 		var option = document.createElement("option");
 		option.text = filter_zones[i];
-		myOpts.add(option);
+		filterOptions.add(option);
 //		alert("i=" + i + " ; option.text=" + option.text + " ; filterValue=" + filterValue);
 		if (option.text === filterValue) {
 			filter.selectedIndex = i + 1;
@@ -134,8 +145,6 @@ function populateAddZoneSelect(result) {
 	}
 	else {
 		alert("populateAddZoneSelect result error!");
-/*		user_zones.push("<tr><td colspan='3'> An error has occured... " + 
-				result.err_type + ": " + result.err + "</td></tr>");*/
 	}
 }
 
@@ -172,10 +181,8 @@ function post_zone() {
 	var addSelect = document.getElementById("addZone");
 	
 	function postZoneComplete(result) {
-//		alert("in postZoneComplete()");
 		if (result.status != 'error') {
 			$("#addCity").val("");
-//			var addSelect = document.getElementById("addZone");		
 			addSelect.selectedIndex = 0;
 			$("#addTime").html("");
 			
@@ -214,6 +221,7 @@ function put_zone(listId) {
 				dataType: "json", // data type of response
 				success: renderList
 			}).done(function() { //resolve deferred object
+//				alert("done: modifyStatusMessage=" + $("#modifyStatusMessage" + listId).html());
 				$("#modifyStatusMessage" + listId).html("modified");
 			});
 		}
@@ -234,28 +242,32 @@ function put_zone(listId) {
 }
 
 function delete_zone(listId) {
-		function deleteZoneComplete(result) {
-//			alert("in deleteZoneComplete()");
-			if (result.status != 'error') {
+	function deleteZoneComplete(result) {			
+		if (result.status != 'error') {
+			if (listCities.length === 1) {
+				//no records to display for this filter
+				get_zones("All");
+			}
+			else {
 				var filterValue = document.getElementById("filterZone").value;
-//				alert("in putZoneComplete() with filterValue=" + filterValue);
 				get_zones(filterValue);
 			}
-			else {				
-				$("#modifyStatusMessage" + listId).text(result.err_type + ": " + result.err);
-			}
 		}
-		
-//		alert("ajax:DELETE");
-		$.ajax({
-			type: "DELETE",
-			url: "/users",
-			data: {city: $("#listCity" + listId).val(),
-				timezone: $("#listTimezone" + listId).text()},
-			dataType: "json", // data type of response
-			success: deleteZoneComplete
-		});	
+		else {				
+			$("#modifyStatusMessage" + listId).text(result.err_type + ": " + result.err);
+		}
 	}
+	
+//		alert("ajax:DELETE");
+	$.ajax({
+		type: "DELETE",
+		url: "/users",
+		data: {city: $("#listCity" + listId).val(),
+			timezone: $("#listTimezone" + listId).text()},
+		dataType: "json", // data type of response
+		success: deleteZoneComplete
+	});	
+}
 
 function get_load_zones() {
 //	alert("ajax:GET /users/load_zones/");
@@ -276,36 +288,4 @@ function get_add_select_zone_time(selectedAddZone) {
 		success: populateSelectedAddZoneTime
 	});		
 }
-
-
-/*$.ajax({
-    url: 'http://example.com/',
-    type: 'PUT',
-    data: 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
-    success: function() { alert('PUT completed'); }
-});*/
-
-
-
-
-/*function _deleteRESTfulData() {
-	function deleteList(result) {
-		// Be sure we don't have an error
-		if (result.status != 'error') {
-			return _getRESTfulData('nodes');
-		}
-		
-		theseNodes.push("<tr><td colspan='3'> An error has occured... "
-					+ result.err_type + ": " + result.err + "</td></tr>");
-		// Now display the HTML results, whether an error or a rowset
-		$("#nodes_results tbody").html(theseNodes);
-	}
-	
-	$.ajax({
-		type: 'DELETE',
-		url: "/xxx",
-		dataType: "json", // data type of response
-		success: deleteList
-	});
-}*/
 

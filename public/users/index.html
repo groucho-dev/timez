@@ -16,25 +16,20 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><input id=addCity type="text" value="" placeholder="location" size=11></td>
+				<td><input id=addCity type="text" value="" placeholder="location" size=15></td>
 				<td>
 					<select id="addZone" onchange="getAddZoneTime(this.value)">
 						<option value="">Select a timezone:</option>
-<!-- 						<option value="ALFKI">Alfreds Futterkiste Hoonga Doonga</option>
-						<option value="NORTS ">North/South</option>
-						<option value="WOLZA">Wolski Zajazd</option> -->
 					</select>
 				</td>
 				<td id=addTime></td>
 				<td><input type="button" id="btnAdd" value="add" class="button" 
 					onclick="onClickAdd()"/></td>
-<!-- 				<td><button class="ArrayInsert" id="arrIns" value="Bogota" name="hoonga">arrInsert</button></td> -->
 				<td id=addStatusMessage></td>
 			</tr>
 		</tbody>
 	</table>
 	</p>
-	<!-- 		<h3>Stored timezones</h3> -->
 	<br />
 	<p>
 	<table id="timezone_list">
@@ -43,18 +38,13 @@
 			<tr>
 				<th class=filter>filter:</th>
 				<th>
-<!-- 					<select id="filterZone" name="filter" onchange="filterChange()"> -->
 					<select id="filterZone" onchange="filterChange()">
-						<option value="All">All</option>
+						<option value="All">All&emsp;&emsp;&emsp;&emsp;&emsp;
+							&emsp;&emsp;&emsp;&emsp;&emsp;</option>
 					</select>
 				</th>
 				<th></th>
 		</thead>		
-<!-- 		<tbody>
-			<tr><td>Bogota</td><td>EST - Eastern Standard</td><td>23:53</td></td>
-				<td><input type="button" id="btnUpdate" value=Update /></td>
-				<td><input type="button" id="btnDelete" value="Delete" /></td></tr>
-		</tbody> -->
 		<tbody/>
 	</table>
 	</p>
