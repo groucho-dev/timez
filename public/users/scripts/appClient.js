@@ -63,14 +63,28 @@ function renderList(result) {
 
 	if (result.status != 'error') {
 	    var d = new Date();
-	    var h = d.getUTCHours();
-	    var m = d.getUTCMinutes();	    	    
-	    var minutes = m < 10 ? "0" + m.toString() : m.toString();	    
-	    $("#heading").html("Timezone Store &ensp; ~ &ensp; GMT " + h + ":" + minutes);
+	    var h_utc = d.getUTCHours();
+	    var m_utc = d.getUTCMinutes();
+	    var minutes = m_utc < 10 ? "0" + m_utc.toString() : m_utc.toString();
+	    $("#heading").html("Timezone Store &ensp; ~ &ensp; GMT " + h_utc + ":" + minutes);
 	    
 		var j = 0;
 	    $.each(result.rows, function(index, objRow) {
-			var hours = ((h + objRow.gmt_offset + 24) % 24).toString();
+	    	var h = h_utc;
+	    	var m = m_utc;
+	    	var offset = objRow.gmt_offset;
+	    	h += Math.floor(offset);
+	    	
+	    	if ((offset > 0) && (offset % 1 !== 0)) {
+	    		// add half an hour
+	    		m = (m + 30) % 60;
+	    		if (m < 30) {
+	    			h += 1;
+	    		}
+	    	}
+	    	
+			var hours = ((h + 24) % 24).toString();
+			var minutes = m < 10 ? "0" + m.toString() : m.toString();
 		    
 			user_zones.push(
 				"<tr><td><input type='text' id='listCity" + j + "' value='" + 
@@ -156,11 +170,21 @@ function populateSelectedAddZoneTime(result) {
 	    var minutes = m < 10 ? "0" + m.toString() : m.toString();	    
 	    $("#heading").html("Timezone Store &ensp; ~ &ensp; GMT " + h + ":" + minutes);
 	    
-	    $.each(result.rows, function(index, objRow) {
-//	    	alert("populateSelectedAddZoneTime got row");	    	
-	    	var hours = ((h + objRow.gmt_offset + 24) % 24).toString();
-	    	$("#addTime").html(hours + ":" + minutes);
-		});	
+//	    	alert("populateSelectedAddZoneTime got row");	
+	    var offset = result.rows[0].gmt_offset;
+    	h += Math.floor(offset);
+    	
+    	if ((offset > 0) && (offset % 1 !== 0)) {
+    		// add half an hour for India & Australia
+    		m = (m + 30) % 60;
+    		if (m < 30) {
+    			h += 1;
+    		}
+    	}
+    	
+		var hours = ((h + 24) % 24).toString();
+		var minutes = m < 10 ? "0" + m.toString() : m.toString();
+    	$("#addTime").html(hours + ":" + minutes);
 	}
 	else {
 		alert("Database error: " + result.err_type + ": " + result.err);

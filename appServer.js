@@ -28,16 +28,6 @@ app.use("/users", users);
 //Setup static page delivery 
 app.use("/users", express.static(__dirname + "/public/users"));
 
-
-
-/*// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});*/
-
-
 app.listen(app.get("port"));
 console.log("App listening on port " + app.get("port"));
 

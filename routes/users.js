@@ -44,12 +44,12 @@ router.get("/zones/:filter", function(objRequest, objResponse) {
 			if (filterParam === "All") {
 				strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
 					"FROM user_zones a, zones b " +
-					"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = b.name)";
+					"WHERE (a.username = 'alpha') AND (a.timezone_name = b.name)";
 			}
 			else {
 				strQuery = "SELECT a.city, a.timezone_name, b.gmt_offset " + 
 				"FROM user_zones a, zones b " +
-				"WHERE (a.username = 'RahulRohatgi') AND (a.timezone_name = " + 
+				"WHERE (a.username = 'alpha') AND (a.timezone_name = " + 
 				"'" + filterParam + "')" + " AND (a.timezone_name = b.name)";	
 			}
 			
@@ -71,7 +71,7 @@ router.post("/", function(objRequest, objResponse) {
 			sendError(objResponse, 503, "error", "connection", objError.code);
 		}
 		else {
-			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
+			var strQuery = "SELECT * FROM user_zones WHERE (username = 'alpha') AND " +
 				"(city = '" + objRequest.body.city + "') AND (timezone_name = '" + 
 				objRequest.body.timezone + "')";
 
@@ -88,7 +88,7 @@ router.post("/", function(objRequest, objResponse) {
 					}
 					else {
 						strQuery = "INSERT INTO `user_zones` (`username`, `city`, `timezone_name`) " + 
-							"VALUES ('RahulRohatgi', '" + objRequest.body.city + "', " +
+							"VALUES ('alpha', '" + objRequest.body.city + "', " +
 							"'" + objRequest.body.timezone + "')";						
 						runQuery(objConnection, strQuery, objResponse);
 					}
@@ -110,7 +110,7 @@ router.put("/", function(objRequest, objResponse) {
 		}
 /*		else {
 			var strQuery = "UPDATE user_zones SET city = '" + objRequest.body.newCity + "' " +
-				"WHERE (username = 'RahulRohatgi') AND " +
+				"WHERE (username = 'alpha') AND " +
 				"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
 				objRequest.body.timezone + "')";
 			
@@ -118,7 +118,7 @@ router.put("/", function(objRequest, objResponse) {
 			runQuery(objConnection, strQuery, objResponse);
 		}*/
 		else {
-			var strQuery = "SELECT * FROM user_zones WHERE (username = 'RahulRohatgi') AND " +
+			var strQuery = "SELECT * FROM user_zones WHERE (username = 'alpha') AND " +
 				"(city = '" + objRequest.body.newCity + "') AND (timezone_name = '" + 
 				objRequest.body.timezone + "')";
 
@@ -135,7 +135,7 @@ router.put("/", function(objRequest, objResponse) {
 					}
 					else {
 						strQuery = "UPDATE user_zones SET city = '" + objRequest.body.newCity + "' " +
-						"WHERE (username = 'RahulRohatgi') AND " +
+						"WHERE (username = 'alpha') AND " +
 						"(city = '" + objRequest.body.oldCity + "') AND (timezone_name = '" + 
 						objRequest.body.timezone + "')";
 						
@@ -160,7 +160,7 @@ router.delete("/", function(objRequest, objResponse) {
 		}
 		else {
 			var strQuery = "DELETE FROM user_zones " +
-					"WHERE (username = 'RahulRohatgi') AND " + 
+					"WHERE (username = 'alpha') AND " + 
 					"(city = '" + objRequest.body.city + "') AND " + 
 					"(timezone_name = '" + objRequest.body.timezone + "')";
 			
